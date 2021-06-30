@@ -24,10 +24,9 @@
 """
 
 
-def number_revers(num):
-    num = str(num)
-    l = len(num) - 1
-    return num[l] if len(num) == 1 else num[l] + number_revers(num[0:l])
+def number_revers(num, num_rev=''):
+    num_rev += str(num % 10)
+    return num_rev if len(str(num)) == 1 else number_revers(num // 10, num_rev)
 
 
 num = 1230

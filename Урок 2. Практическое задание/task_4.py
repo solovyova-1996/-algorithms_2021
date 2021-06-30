@@ -16,15 +16,24 @@
 Для оценки Отлично в этом блоке необходимо выполнить 5 заданий из 7
 """
 
+
+# def sum_numbers(count, sum_num=0.0, num=1.0):
+#     if num < 0 and count > 0:
+#         return sum_numbers(count - 1, sum_num + num, abs(num / 2))
+#     elif num > 0 and count > 0:
+#         return sum_numbers(count - 1, sum_num + num, -num / 2)
+#     else:
+#         return sum_num
+
 def sum_numbers(count, sum_num=0.0, num=1.0):
-    if num < 0 and count > 0:
-        return sum_numbers(count - 1, sum_num + num, abs(num / 2))
-    elif num > 0 and count > 0:
-        return sum_numbers(count - 1, sum_num + num, -num / 2)
-    else:
+    if count == 0:
         return sum_num
+    else:
+        return sum_numbers(count - 1, sum_num + num, abs(num / 2)) if num < 0 else sum_numbers(count - 1, sum_num + num, -num / 2)
 
 
-count = 4
+
+
+count = 3
 a = sum_numbers(count)
 print(a)
