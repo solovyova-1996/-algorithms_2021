@@ -16,3 +16,18 @@
 р
 а
 """
+
+
+def search_substring(string, set_substring):
+    for i in range(1,len(string)):
+        set_substring.add(hash(string[:i]))
+    for i in range(len(string)):
+        set_substring.add(hash(string[-i:]))
+        set_substring.add(hash(string[i]))
+    return len(set_substring)
+
+set_substring_test = set()
+string_test = 'papa'
+test_func = search_substring(string_test,set_substring_test)
+print(test_func)
+print(set_substring_test)
