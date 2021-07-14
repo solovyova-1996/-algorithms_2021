@@ -21,3 +21,187 @@
 Попытайтесь дополнительно свой декоратор используя ф-цию memory_usage из memory_profiler
 С одновременным замером времени (timeit.default_timer())!
 """
+import memory_profiler
+from timeit import default_timer
+from random import randint
+from collections import Counter
+from numpy import mean,array
+
+
+def decor_time_memory_profiler(func):
+    def wrapper(*args, **kwargs):
+        memory_res_1 = memory_profiler.memory_usage()
+        start_time = default_timer()
+        res = func(*args, **kwargs)
+        res_time = default_timer() - start_time
+        memory_res_2 = memory_profiler.memory_usage()
+        mem_diff = memory_res_2[0] - memory_res_1[0]
+        return res, mem_diff, res_time
+
+    return wrapper
+
+
+# В программе генерируется случайное целое число от 0 до 100.
+# Пользователь должен его отгадать не более чем за 10 попыток. После каждой
+# неудачной попытки должно сообщаться больше или меньше введенное пользователем
+# число, чем то, что загадано. Если за 10 попыток число не отгадано,
+# то вывести загаданное число.
+# Подсказка:
+# Базовый случай здесь - угадали число или закончились попытки
+# Решите через рекурсию. Решение через цикл не принимается.
+# Для оценки Отлично в этом блоке необходимо выполнить 5 заданий из 7
+
+
+@decor_time_memory_profiler
+# @memory_profiler.profile
+def guess_number(number, attenpt_count=10):
+    user_number = int(input('Отгадайте число: '))
+    if attenpt_count == 1:
+        return print(f'Вы проиграли.Загаданное чило: {number}')
+    else:
+        if user_number < number:
+            print(
+                f'Ваше число меньше загаданного. У вас осталось {attenpt_count - 1} попыток')
+            return guess_number(number, attenpt_count - 1)
+        elif user_number > number:
+            print(
+                f'Ваше число больше загаданного. У вас осталось {attenpt_count - 1} попыток')
+            return guess_number(number, attenpt_count - 1)
+        elif number == user_number:
+            return print(f'Поздравляю! Вы угадали! Загаданное число: {number}')
+
+
+################## отредактированная функция ######################
+@decor_time_memory_profiler
+def guess_number_1(number, attenpt_count=10):
+    # user_number = ''
+    while attenpt_count != 0:
+        user_number = int(input('Отгадайте число: '))
+        if user_number < number:
+            print(
+                f'Ваше число меньше загаданного. У вас осталось {attenpt_count - 1} попыток')
+        elif user_number > number:
+            print(
+                f'Ваше число больше загаданного. У вас осталось {attenpt_count - 1} попыток')
+
+        else:
+            print(f'Поздравляю! Вы угадали! Загаданное число: {number}')
+            break
+        attenpt_count -= 1
+    else:
+        print('вы проиграли')
+
+
+number = randint(0, 100)
+
+res, mem_diff, res_time = guess_number(number)
+print(f'Время выполнения: {res_time}')
+print(f'Выполнение заняло: {mem_diff} Mib')
+# # Время выполнения: 34.4529246
+# # Выполнение заняло: 0.05859375 Mib
+res, mem_diff, res_time = guess_number_1(number)
+print(f'Время выполнения: {res_time}')
+print(f'Выполнение заняло: {mem_diff} Mib')
+# Время выполнения: 18.204082600000003
+# Выполнение заняло: 0.02734375 Mib
+
+# Вывод: модернизация функции заключается в переходе с рекурсии на цикл.
+# В результате функция guess_number_1(number) выполняется быстрее и использует меньше памяти
+
+
+################################ скрипт №2 ###########################
+# Представлен список чисел. Определить элемент списка, который повторяется больше всего раз.
+# src = [2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11]
+# result = 2
+
+
+src = [2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11, 99, 88, 99, 66, 5, 5, 3,
+       4, 5, 68, 82, 3, 4, 4, 5, 8,
+       2, 2, 2, 7, 23, 1, 44, 44, 3, 2, 10, 7, 4, 11, 99, 88, 99, 66, 5, 5, 3,
+       4, 5, 68, 82, 3, 4, 4, 5, 8, 4, 11, 99, 88, 99, 66, 5, 5, 3]
+
+
+@decor_time_memory_profiler
+def f():
+    max_count = 1
+    el = src[0]
+    for i in src:
+        if src.count(i) > max_count:
+            max_count = src.count(i)
+            el = i
+    return el
+
+
+res, mem_diff, res_time = f()
+print(f'Время выполнения: {res_time}')
+print(f'Выполнение заняло: {mem_diff} Mib')
+
+
+# Время выполнения: 0.0002150999999999681
+# Выполнение заняло: 0.0078125 Mib
+############################# отредактированный скрипт #############################
+@decor_time_memory_profiler
+def f_1():
+    num = Counter(src).most_common(1)[0]
+    return num[0]
+
+
+res, mem_diff, res_time = f_1()
+print(f'Время выполнения: {res_time}')
+print(f'Выполнение заняло: {mem_diff} Mib')
+# Время выполнения: 0.00013530000000006037
+# Выполнение заняло: 0.0 Mib
+
+# Вывод: модернизация функции заключается в использовании специализированной
+# коллекции Counter из модуля collections, не происходит перебора элементов списка в цикле
+# в результате количество используемой памяти уменьшается
+############################### Скрипт №3   ###########################
+# Это задача с курса по python на платформе степик
+# Напишите программу, которая считывает с клавиатуры два числа a и bb, считает и
+# выводит на консоль среднее арифметическое всех чисел из отрезка [a; b][a;b], которые кратны числу 3.
+#  В приведенном ниже примере среднее арифметическое считается для чисел на отрезке [-5; 12][−5;12].
+#  Всего чисел, делящихся на 33, на этом отрезке 66: -3, 0, 3, 6, 9, 12−3,0,3,6,9,12. Их среднее арифметическое равно 4.54.5
+# На вход программе подаются интервалы, внутри которых всегда есть хотя бы одно число, которое делится на 3.
+@decor_time_memory_profiler
+def avg_interval_1():
+    lst = [i for i in range(a, b + 1)]
+    new_lst = []
+    for i in lst:
+        if i % 3 == 0:
+            new_lst.append(i)
+    return sum(new_lst)/ len(new_lst)
+a = -5 #int(input('Введите начало интервала: '))
+b = 12 #int(input('Введите конец интервала: '))
+res, mem_diff, res_time = avg_interval_1()
+print(f'Время выполнения: {res_time}')
+print(f'Выполнение заняло: {mem_diff} Mib')
+# Время выполнения: 7.66999999999296e-05
+# Выполнение заняло: 0.0078125 Mib
+
+########################## преобразование скрипта #############################
+def gen_lst():
+    for i in range(a, b + 1):
+        if i % 3 == 0:
+            yield i
+
+
+@decor_time_memory_profiler
+def avg_interval_2():
+    count = 0
+    summ = 0
+    for i in list(gen_lst()):
+        summ += i
+        count+=1
+    return summ/count
+
+
+a = -5 #int(input('Введите начало интервала: '))
+b = 12 #int(input('Введите конец интервала: '))
+res, mem_diff, res_time = avg_interval_2()
+print(res)
+print(f'Время выполнения: {res_time}')
+print(f'Выполнение заняло: {mem_diff} Mib')
+# Время выполнения: 4.810000000010639e-05
+# Выполнение заняло: 0.0 Mib
+# вывод: преобразование скрипта заключается в использование генератора, вместо создания списка.
+# в итогевыполнение функции занимает меньше времени и задействует меньше памяти
